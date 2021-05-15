@@ -21,4 +21,7 @@ store.dispatch(bugAdded({ description: 'Bug 3' }));
 store.dispatch(bugResolved({ id: 1 }));
 store.dispatch(bugRemoved({ id: 3 }));
 
-console.log(getUnresolvedBugs(store.getState()));
+const x = getUnresolvedBugs(store.getState());
+const y = getUnresolvedBugs(store.getState());
+
+console.log(x === y); // Get the same array

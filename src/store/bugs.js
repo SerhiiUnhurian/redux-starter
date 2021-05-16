@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
+import { apiCallBegan } from './api';
 
 let lastId = 0;
 
@@ -12,6 +13,16 @@ const slice = createSlice({
   },
   reducers: {
     // maps action -> action handlers
+    bugsRequested: (bugs, action) => {
+      bugs.loading = true;
+    },
+    bugsRequestFailed: (bugs, action) => {
+      bugs.loading = false;
+    },
+    bugsReceived: (bugs, action) => {
+      bugs.list = action.payload;
+      bugs.loading = false;
+    },
     bugAdded: (bugs, action) => {
       bugs.list.push({
         id: ++lastId,
@@ -35,9 +46,27 @@ const slice = createSlice({
   },
 });
 
-export const { bugAdded, bugRemoved, bugResolved, bugAssignedToUser } =
-  slice.actions;
+export const {
+  bugsRequested,
+  bugsRequestFailed,
+  bugsReceived,
+  bugAdded,
+  bugRemoved,
+  bugResolved,
+  bugAssignedToUser,
+} = slice.actions;
 export default slice.reducer;
+
+// Action Creators
+const url = '/bugs';
+
+export const loadBugs = () =>
+  apiCallBegan({
+    url,
+    onStart: bugsRequested.type,
+    onSuccess: bugsReceived.type,
+    onError: bugsRequestFailed.type,
+  });
 
 // Memoized Selector
 export const getUnresolvedBugs = createSelector(

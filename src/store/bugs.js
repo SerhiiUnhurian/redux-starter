@@ -5,27 +5,31 @@ let lastId = 0;
 
 const slice = createSlice({
   name: 'bugs',
-  initialState: [],
+  initialState: {
+    list: [],
+    loading: false,
+    lastFetch: null,
+  },
   reducers: {
     // maps action -> action handlers
     bugAdded: (bugs, action) => {
-      bugs.push({
+      bugs.list.push({
         id: ++lastId,
         description: action.payload.description,
         resolved: false,
       });
     },
     bugRemoved: (bugs, action) => {
-      const index = bugs.findIndex(bug => bug.id === action.payload.id);
-      bugs.splice(index, 1);
+      const index = bugs.list.findIndex(bug => bug.id === action.payload.id);
+      bugs.list.splice(index, 1);
     },
     bugResolved: (bugs, action) => {
-      const index = bugs.findIndex(bug => bug.id === action.payload.id);
+      const index = bugs.list.findIndex(bug => bug.id === action.payload.id);
       bugs[index].resolved = true;
     },
     bugAssignedToUser: (bugs, action) => {
       const { bugId, userId } = action.payload;
-      const bug = bugs.find(bug => bug.id === bugId);
+      const bug = bugs.list.find(bug => bug.id === bugId);
       bug.userId = userId;
     },
   },
@@ -38,12 +42,12 @@ export default slice.reducer;
 // Memoized Selector
 export const getUnresolvedBugs = createSelector(
   state => state.entities.bugs,
-  bugs => bugs.filter(bug => !bug.resolved)
+  bugs => bugs.list.filter(bug => !bug.resolved)
 );
 
 // Currying
 export const getBugsByUser = userId =>
   createSelector(
     state => state.entities.bugs,
-    bugs => bugs.filter(bug => bug.userId === userId)
+    bugs => bugs.list.filter(bug => bug.userId === userId)
   );

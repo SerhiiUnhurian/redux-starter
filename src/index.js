@@ -1,12 +1,11 @@
 import configureStore from './store/configureStore';
+import * as actions from './store/api';
 
 const store = configureStore();
 
-store.dispatch({
-  type: 'apiRequestBegan',
-  payload: {
+store.dispatch(
+  actions.apiCallBegan({
     url: '/bugs',
     onSuccess: 'bugsReceived',
-    onError: 'apiRequestFailed',
-  },
-});
+  })
+);

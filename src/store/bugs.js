@@ -26,11 +26,8 @@ const slice = createSlice({
       bugs.lastFetch = Date.now();
     },
     bugAdded: (bugs, action) => {
-      bugs.list.push({
-        id: ++lastId,
-        description: action.payload.description,
-        resolved: false,
-      });
+      const bug = action.payload;
+      bugs.list.push(bug);
     },
     bugRemoved: (bugs, action) => {
       const index = bugs.list.findIndex(bug => bug.id === action.payload.id);
@@ -78,6 +75,14 @@ export const loadBugs = () => (dispatch, getState) => {
     })
   );
 };
+
+export const addBug = bug =>
+  apiCallBegan({
+    url,
+    method: 'post',
+    data: bug,
+    onSuccess: bugAdded.type,
+  });
 
 // Memoized Selector
 export const getUnresolvedBugs = createSelector(

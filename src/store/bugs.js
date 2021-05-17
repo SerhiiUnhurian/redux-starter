@@ -3,8 +3,6 @@ import { createSelector } from 'reselect';
 import { apiCallBegan } from './api';
 import moment from 'moment';
 
-let lastId = 0;
-
 const slice = createSlice({
   name: 'bugs',
   initialState: {
@@ -35,7 +33,7 @@ const slice = createSlice({
     },
     bugResolved: (bugs, action) => {
       const index = bugs.list.findIndex(bug => bug.id === action.payload.id);
-      bugs[index].resolved = true;
+      bugs.list[index].resolved = true;
     },
     bugAssignedToUser: (bugs, action) => {
       const { bugId, userId } = action.payload;
@@ -82,6 +80,14 @@ export const addBug = bug =>
     method: 'post',
     data: bug,
     onSuccess: bugAdded.type,
+  });
+
+export const resolveBug = id =>
+  apiCallBegan({
+    url: url + '/' + id,
+    method: 'patch',
+    data: { resolved: true },
+    onSuccess: bugResolved.type,
   });
 
 // Memoized Selector

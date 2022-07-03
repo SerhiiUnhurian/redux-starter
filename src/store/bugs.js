@@ -65,7 +65,7 @@ export const loadBugs = () => (dispatch, getState) => {
 
   if (diffInMinutes < cachingTimeInMinutes) return;
 
-  dispatch(
+  return dispatch(
     apiCallBegan({
       url,
       onStart: bugsRequested.type,
@@ -82,6 +82,8 @@ export const addBug = bug =>
     data: bug,
     onSuccess: bugAdded.type,
   });
+
+  // TODO: add resolveBug(id) action
 
 export const resolveBug = id =>
   apiCallBegan({
